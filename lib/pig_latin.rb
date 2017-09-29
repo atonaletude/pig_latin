@@ -4,27 +4,31 @@ class PigLatin
   CONSANANT_SOUNDS = ['yt','thr','qu','sch','th','ch']
 
   def self.translate(regular_word)
-    if vowel?(regular_word)
-      regular_word += 'ay'
-
-    elsif preceding_qu?(regular_word)
-      new_word = regular_word.sub(/\w*u/,'')
-      suffix = regular_word.chars - new_word.chars
-      new_word + suffix.join + 'ay'
+    collection = []
+    regular_word.split.each do |word|
+      if vowel?(word)
+        word += 'ay'
+      elsif preceding_qu?(word)
+        new_word = word.sub(/\w*u/,'')
+        suffix = word.chars - new_word.chars
+        word = new_word + suffix.join + 'ay'
       # puts 'yes'
-    elsif special_consonant?(regular_word)
-      word_clone = regular_word.clone
-      CONSANANT_SOUNDS.each do |sub_string|
-        if regular_word.match?(/#{sub_string}/)
-        word_clone = word_clone.sub(/#{sub_string}/, '') + sub_string
-        break
+      elsif special_consonant?(word)
+        word_clone = word.clone
+        CONSANANT_SOUNDS.each do |sub_string|
+          if word.match?(/#{sub_string}/)
+            word_clone = word_clone.sub(/#{sub_string}/, '') + sub_string
+            break
+          end
+        end
+        word = word_clone + 'ay'
+      elsif consonant?(word)
+        word += word[0] + 'ay'
+        word = word.split('').drop(1).join
       end
-      end
-      word_clone + 'ay'
-    elsif consonant?(regular_word)
-      regular_word += regular_word[0] + 'ay'
-      regular_word.split('').drop(1).join
+      collection << word
     end
+    collection.join(' ')
   end
 
   def self.vowel?(regular_word)
@@ -50,4 +54,4 @@ class PigLatin
 
 end
 
-p PigLatin.translate('sqaure')
+p PigLatin.translate('quick fast run')
